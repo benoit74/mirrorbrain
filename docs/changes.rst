@@ -6,12 +6,27 @@ Release Notes/Change History
 Release 3.0.0 (WIP)
 -----------------------------------
 
+Changes:
+
 * Drop support for Python 2, support only Python 3.11+
+
 * Migrate all Python codebase to Python 3.11+
+
 * Migrate to MaxMind **GeoIP2** databases (GeoIP Legacy databases have been retired at the end of May 2022)
+
 * Remove unused and deprecated Python tools ``crawl`` and ``filelist``
+
 * Migrate Python tools to use MaxMind Python library instead of C programs
+
 * Drop C tools `geoip-lite-update`, `geoiplookup_city` and `geoiplookup_continent` which have been deprecated
+
+Bug fixes:
+
+* Add support for headers when parsing RSync replies in ``scanner.pl``
+
+Known limitations:
+
+* `mod_stats` tooling has not yet been migrated to Python 3
 
 Release 2.18.1 (r8379, Feb 3, 2014)
 -----------------------------------
