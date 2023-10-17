@@ -12,7 +12,7 @@ class VersionParser:
         s = vers.split(".")
         self.major = int(s[0])
         self.minor = int(s[1])
-        self.patchlevel = int(s[2])
+        self.patchlevel = int(s[2].split("-")[0])
 
     def __str__(self):
         return self.vers
