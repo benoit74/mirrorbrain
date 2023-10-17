@@ -226,11 +226,11 @@ Another cron job is useful to remove unreferenced files from the database::
 Keeping the GeoIP database uptodate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The GeoIP database is changed at least once a month, so a new copy should be
+The GeoIP database is changed on a regular pace by MaxMind, so a new copy should be
 downloaded regularly::
 
   # update GeoIP database on Mondays
-  31 2 * * mon              root  sleep $(($RANDOM/1024)); /usr/bin/geoip-lite-update
+  31 2 * * mon              root  sleep $(($RANDOM/1024)); /usr/bin/geoipupdate
 
 (The 'sleep' is there so you can copy the line, don't need to adjust the time,
 and still the GeoIP servers will not get a lot of simultaneous hits at exactly
@@ -356,48 +356,29 @@ Configuring GeoIP
 -----------------
 
 .. note::
-   It is better to use the larger `GeoLiteCity
-   <http://www.maxmind.com/app/geolitecity>`_ database, instead of the minimal
-   GeoIP database that contains only country information. With the more
-   detailed info in the former database, a better mirror selection is achieved
-   in many cases.
+   MaxMind has retired the GeoIP Legacy databases at the end of May 2022
+   Mirrorbrain has been migrated to GeoIP2 databases.
+   GeoLite2-City is sufficient for mirrorbrain needs.
+   Beware that you will need an account on MaxMind to grab a license key even
+   if you are allowed to use the Free version. Ensure that you have read MaxMind
+   terms and conditions and are allowed to use the Free version, or pay for the 
+   commercial one.
 
-Edit /etc/apache2/conf.d/mod_geoip.conf::
+From MaxMind account portal, generate a license key and download the resulting ``GeoIP.conf```
+file and place it in ``/etc/GeoIP.conf`` (default location suggested by MaxMind).
 
-  <IfModule mod_geoip.c>
-     GeoIPEnable On
-     GeoIPDBFile /var/lib/GeoIP/GeoLiteCity.dat.updated
-     #GeoIPOutput [Notes|Env|All]
-     GeoIPOutput Env
+Edit /etc/apache2/conf.d/mod_maxminddb.conf::
+
+  <IfModule mod_maxminddb.c>
+    MaxMindDBFile CITY_DB    /usr/share/GeoIP/GeoLite2-City.mmdb
+    MaxMindDBEnv GEOIP_COUNTRY_CODE CITY_DB/country/iso_code
+    MaxMindDBEnv GEOIP_COUNTRY_NAME CITY_DB/country/names/en
+    MaxMindDBEnv GEOIP_CONTINENT_CODE CITY_DB/continent/code
+    MaxMindDBEnv GEOIP_LONGITUDE CITY_DB/location/longitude
+    MaxMindDBEnv GEOIP_LATITUDE CITY_DB/location/latitude
+    MaxMindDBEnv GEOIP_REGION CITY_DB/subdivisions/0/iso_code
+    MaxMindDBEnv GEOIP_REGION_NAME CITY_DB/subdivisions/0/names/en    
   </IfModule>
-
-(Change GeoIPOutput All to GeoIPOutput Env)
-
-Note that a caching mode like MMapCache needs to be used, when Apache runs with
-the worker MPM.In this case, use::
-
-  <IfModule mod_geoip.c>
-     GeoIPEnable On
-     GeoIPDBFile /var/lib/GeoIP/GeoLiteCity.dat.updated MMapCache
-     GeoIPOutput Env
-  </IfModule>
-
-
-
-.. configure GeoIP database updates
-
-Seting up automatic updates of the GeoIP database
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-New versions of the GeoIP database are released each month. You can set up a
-cron job to automatically fetch new updates as follows. If you do that, make
-sure to set the GeoIPDBFile path (see above) to
-:file:`/var/lib/GeoIP/GeoLiteCity.dat.updated`::
-
-  # update GeoIP database on Mondays
-  31 2 * * mon   root    sleep $(($RANDOM/1024)); /usr/bin/geoip-lite-update
-
-
 
 
 Creating a virtual host

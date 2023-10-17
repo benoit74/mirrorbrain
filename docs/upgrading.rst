@@ -250,10 +250,10 @@ To take advantage of mirror selection by geographical distance (as additional cr
 you used the simpler database so far, you need to switch to the city edition
 which contains the required data. The following steps are necessary:
 
-1) Use the provided :program:`geoip-lite-update` tool to
-   download it (and keep it updated regularly via cron). 
+1) Use MaxMind :program:`geoipupdate` tool to
+   download latest MaxMind DBs (and keep it updated regularly via cron). 
    
-2) Edit your mod_geoip configuration and change ``GeoIP.dat`` to ``GeoLiteCity.dat.updated``
+2) Place your own credentials in ``GeoIp.conf`` (by default at ``/etc/GeoIP.conf``)
 
 3) Run :program:`mb update -A --all-mirrors` to update the mirrors' GeoIP data (coordinates, country and region), and (if :program:`mod_asn` is used) autonomous system and prefix.
 

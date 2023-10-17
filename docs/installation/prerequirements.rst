@@ -57,11 +57,8 @@ Gentoo
 Frontend (mod_mirrorbrain, the redirector)
 ------------------------------------------
 
-* if geographical mirror selection is going to be used, `mod_geoip`_ and `libGeoIP`_ 
-  are required.
-
-* If `mod_geoip`_ is used, it needs to be version 1.2.0 or newer. See
-  http://mirrorbrain.org/issues/issue16
+* if geographical mirror selection is going to be used, `mod_maxminddb`_ and `libmaxminddb`_ 
+  are required. `geoipupdate` is also recommended to download and update MaxMind DBs.
 
 * `mod_form`_, plus a `patch preserving the arguments that it parses`_ for
   other modules, like mod_autoindex.
@@ -71,8 +68,9 @@ Frontend (mod_mirrorbrain, the redirector)
   libapr_memcache, `mod_memcache`_, `memcache`_ daemon
 
 .. _`mod_form`: http://apache.webthing.com/mod_form/
-.. _`mod_geoip`: http://www.maxmind.com/app/mod_geoip
-.. _`libGeoIP`: http://www.maxmind.com/app/c
+.. _`libmaxminddb`: https://github.com/maxmind/libmaxminddb
+.. _`mod_maxminddb`: https://github.com/maxmind/mod_maxminddb
+.. _`geoipupdate`: https://github.com/maxmind/geoipupdate
 .. _`mod_memcache`: http://code.google.com/p/modmemcache/
 .. _`memcache`: http://www.danga.com/memcached/
 .. _`patch preserving the arguments that it parses`: https://build.opensuse.org/source/Apache:Modules/apache2-mod_form/mod_form.c.preserve_args.patch?rev=40cbd37223a3593d7d66aacc389d716e
