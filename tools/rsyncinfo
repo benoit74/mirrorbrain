@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # rsyncinfo - script to get info on modules on rsync servers
 # 

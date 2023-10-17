@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 ################################################################################
 # mirrorprobe -- fetch mirrors from a database, try to access them and mark them 

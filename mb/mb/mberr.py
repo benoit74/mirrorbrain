@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Copyright (C) 2008-2010 Peter Poeml.  All rights reserved.
 # This program is free software; it may be used, copied, modified
