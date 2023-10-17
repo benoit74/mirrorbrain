@@ -3,7 +3,7 @@ import sys
 import os
 import configparser
 import re
-import mblib.mberr
+import mb.mberr
 
 
 boolean_opts = [ 'zsync_hashes', 'chunked_hashes' ]
@@ -32,7 +32,7 @@ class Config:
         self.mirrorprobe = {}
 
         if not os.path.exists(conffile):
-            raise mblib.mberr.NoConfigfile(conffile, 'No config file found. Please refer to:\n'
+            raise mb.mberr.NoConfigfile(conffile, 'No config file found. Please refer to:\n'
                     'http://mirrorbrain.org/docs/installation/initial_config/#create-mirrorbrain-conf')
 
         cp = configparser.SafeConfigParser()
@@ -70,7 +70,7 @@ class Config:
                 try:
                     self.general[i][b] = cp.getboolean(i, b)
                 except ValueError as e:
-                    raise mblib.mberr.ConfigError('cannot parse setting in [%s] section: %r' % (i, b + str(e)), conffile)
+                    raise mb.mberr.ConfigError('cannot parse setting in [%s] section: %r' % (i, b + str(e)), conffile)
                 except configparser.NoOptionError as e:
                     pass
             # set default values where the config didn't define anything

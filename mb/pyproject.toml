@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mblib"
+name = "mb"
 authors = [{ name = "MirrorBrain project", email= "info@mirrorbrain.org"}, { name = "Kiwix", email = "dev@kiwix.org" }]
 requires-python = ">=3.11"
 description = "mb, a tool to maintain the MirrorBrain database"
@@ -28,10 +28,10 @@ test = ["pytest==7.4.2", "coverage==7.3.2"]
 dev = [
   "pre-commit==3.4.0",
   "debugpy==1.8.0",
-  "mblib[scripts]",
-  "mblib[lint]",
-  "mblib[test]",
-  "mblib[check]",
+  "mb[scripts]",
+  "mb[lint]",
+  "mb[test]",
+  "mb[check]",
 ]
 
 [project.urls]
@@ -39,10 +39,10 @@ Homepage = "https://github.com/benoit74/mirrorbrain"
 Donate = "https://www.kiwix.org/en/support-us/"
 
 [project.scripts]
-mb = "mblib.mb:main"
+mb = "mb.mb:main"
 
 [tool.hatch.version]
-path = "mblib/__about__.py"
+path = "mb/__about__.py"
 
 [tool.hatch.build]
 exclude = ["/.github"]
@@ -174,7 +174,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["mblib"]
+known-first-party = ["mb"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -189,21 +189,21 @@ testpaths = ["tests"]
 pythonpath = [".", "src"]
 
 [tool.coverage.paths]
-mb = ["mblib", "mb.py"]
+mb = ["mb"]
 tests = ["tests"]
 
 [tool.coverage.run]
-source_pkgs = ["mblib"]
+source_pkgs = ["mb"]
 branch = true
 parallel = true
-omit = ["mblib/__about__.py"]
+omit = ["mb/__about__.py"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.pyright]
-include = ["mblib", "tests", "tasks.py"]
+include = ["mb", "tests", "tasks.py"]
 exclude = [".env/**", ".venv/**"]
-extraPaths = ["mblib"]
+extraPaths = ["mb"]
 pythonVersion = "3.11"
 typeCheckingMode = "basic"

@@ -1,4 +1,4 @@
-import mblib.mberr
+import mb.mberr
 
 class Directory:
     def __init__(self, name):
@@ -15,7 +15,7 @@ def delete_mirror(conn, mirror):
     try:
         m = conn.Server.select(conn.Server.q.identifier == mirror)[0]
     except IndexError:
-        raise mblib.mberr.MirrorNotFoundError(mirror)
+        raise mb.mberr.MirrorNotFoundError(mirror)
 
     query = """SELECT mirr_del_byid(%d, id) FROM filearr WHERE %s = ANY(mirrors)""" \
                    % (m.id, m.id)

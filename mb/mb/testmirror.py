@@ -6,14 +6,14 @@ import subprocess
 import tempfile
 import shutil
 import socket
-import mblib.util
+import mb.util
 
 TIMEOUT = 20
 
 socket.setdefaulttimeout(TIMEOUT)
 
 def access_http(identifier, url):
-    from mblib.util import Sample
+    from mb.util import Sample
     S = Sample(identifier, url, '', get_content=True)
     probe(S)
     return S
@@ -30,7 +30,7 @@ def req(baseurl, filename, http_method='GET', get_digest=False):
     """compatibility method that wraps around probe(). It was used
     before probe() existed and is probably not needed anymore.
     """
-    from mblib.util import Sample
+    from mb.util import Sample
     S = Sample('', baseurl, filename, get_digest=get_digest)
     probe(S, http_method=http_method)
     return (S.http_code, S.digest)
@@ -60,7 +60,7 @@ def probe(S, http_method='GET'):
                     if not buf: break
                     t.write(buf)
                 t.flush()
-                S.digest = mblib.util.dgst(t.name)
+                S.digest = mb.util.dgst(t.name)
                 t.close()
             except:
                 return S
@@ -104,7 +104,7 @@ def probe(S, http_method='GET'):
             # SuSE Linux 8.2.)
             # poeml, Mon Jun 22 18:10:33 CEST 2009
             cmd = ['rsync -d']
-            if mblib.util.get_rsync_version().startswith('3.'):
+            if mb.util.get_rsync_version().startswith('3.'):
                 cmd.append('--contimeout=%s' % TIMEOUT)
             cmd.append('--timeout=%d %s %s/' % (TIMEOUT, S.probeurl, tmpdir))
 
@@ -118,7 +118,7 @@ def probe(S, http_method='GET'):
             if rc == 0 or os.path.exists(targetfile):
                 S.has_file = True
             if S.has_file and S.get_digest:
-                S.digest = mblib.util.dgst(targetfile)
+                S.digest = mb.util.dgst(targetfile)
             if S.has_file and S.get_content:
                 S.content = open(targetfile).read()
 
@@ -148,7 +148,7 @@ def make_probelist(mirrors, filename, url_type='http', get_digest=False, get_con
     """return list of Sample instances, in order to be probed.
     The Sample instances are used to hold the probing results.
     """
-    from mblib.util import Sample
+    from mb.util import Sample
     if url_type == 'http':
         return [ Sample(i.identifier, i.baseurl, filename, 
                         get_digest=get_digest, get_content=get_content) 
@@ -200,7 +200,7 @@ def mirrors_have_file(mirrors, filename, url_type='all',
                                      get_content=get_content))
 
 def lookups_probe(mirrors, get_digest=False, get_content=False):
-    from mblib.util import Sample
+    from mb.util import Sample
     probelist = [ Sample(i['identifier'], i['baseurl'], i['path'], 
                          get_digest=get_digest, get_content=get_content) 
                   for i in mirrors ]

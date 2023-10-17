@@ -150,11 +150,11 @@ def main():
     if '--config' in sys.argv:
         configpath = sys.argv[sys.argv.index('--config') + 1]
 
-    import mblib.conf
-    import mblib.mberr
+    import mb.conf
+    import mb.mberr
     try:
-        config = mblib.conf.Config(conffile = configpath, instance = brain_instance)
-    except mblib.mberr.NoConfigfile as e:
+        config = mb.conf.Config(conffile = configpath, instance = brain_instance)
+    except mb.mberr.NoConfigfile as e:
         print(e.msg, file=sys.stderr)
         sys.exit(1)
 
@@ -264,8 +264,8 @@ def main():
     #
     # setup database connection
     #
-    import mblib.conn
-    conn = mblib.conn.Conn(config.dbconfig, 
+    import mb.conn
+    conn = mb.conn.Conn(config.dbconfig, 
                         debug = (options.loglevel == 'DEBUG'))
 
 
