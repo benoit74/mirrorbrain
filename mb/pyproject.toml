@@ -17,6 +17,7 @@ dependencies = [
   "cmdln==2.0.0",
   "SQLObject==3.10.2", # was SQLObject 3.7.0
   "psycopg2-binary==2.9.9", # was psycopg2 2.7.7
+  "geoip2==4.7.0",
 ]
 dynamic = ["version"]
 
