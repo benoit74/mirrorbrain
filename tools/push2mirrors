@@ -23,7 +23,6 @@
 
 import sys
 import os
-import commands
 import subprocess
 from subprocess import Popen, PIPE
 from multiprocessing import Pool
@@ -81,7 +80,7 @@ def run_push(push):
 
     # run the scanner
     cmd = 'mb scan %s' % push.name
-    (rc_scan, out) = commands.getstatusoutput(cmd)
+    (rc_scan, out) = subprocess.getstatusoutput(cmd)
     if rc_scan != 0:
         sys.stdout.write("\n%s: scan return code: %s\n" % (push.name, rc_scan))
     for line in out.splitlines():
@@ -121,5 +120,5 @@ else:
 p = Pool(pool_size)
 result = p.map_async(run_push, pushes)
 #print result.get(timeout=20)
-print result.get()
+print(result.get())
 

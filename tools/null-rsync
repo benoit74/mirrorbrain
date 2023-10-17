@@ -160,7 +160,7 @@ def main():
             # print what we are doing
             # but omit symlinks with incorrect mtime
             if not line.startswith('recv rwxrwxrwx .L..t......'):
-                print line.rstrip()
+                print(line.rstrip())
 
         if line.startswith('IO'):
             sys.exit('rsync returned an error:\n%s' % line)
@@ -183,7 +183,7 @@ def main():
 
         # this special case also deals with broken links that point outside the tree
         if attrs[1] == 'd' and os.path.islink(path.rstrip('/')):
-            print 'removing link %r, to be replaced by directory' % path.rstrip('/')
+            print('removing link %r, to be replaced by directory' % path.rstrip('/'))
             os.unlink(path.rstrip('/'))
 
         # for safety
