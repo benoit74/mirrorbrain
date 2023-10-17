@@ -1,4 +1,4 @@
-import cgi
+import html
 import os
 import os.path
 import sys
@@ -270,7 +270,7 @@ def xhtml(conn, opts, mirrors, markers):
             "img_link": imgref(mirror.country.lower()),
             "region": region,
             "identifier": mirror.identifier,
-            "operatorName": cgi.escape(mirror.operatorName),
+            "operatorName": html.escape(mirror.operatorName),
             "operatorUrl": mirror.operatorUrl,
             "http_link": href(mb.util.strip_auth(mirror.baseurl), "HTTP"),
             "ftp_link": href(mb.util.strip_auth(mirror.baseurlFtp), "FTP"),
