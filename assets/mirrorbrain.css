@@ -51,17 +51,8 @@ p, ul, ol {
 	line-height: 120%;
 }
 
-p {
-}
-
 blockquote {
 	font-style: italic;
-}
-
-ul {
-}
-
-ol {
 }
 
 a {
@@ -73,13 +64,6 @@ a {
 a:hover {
 	text-decoration: none;
 	color: #CC0000;
-}
-
-small {
-}
-
-hr {
-	/* display: none; */
 }
 
 img {
