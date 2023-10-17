@@ -20,6 +20,8 @@ Changes:
 
 * Drop C tools `geoip-lite-update`, `geoiplookup_city` and `geoiplookup_continent` which have been deprecated
 
+* Use git `main` branch instead of `master`
+
 Bug fixes:
 
 * Add support for headers when parsing RSync replies in ``scanner.pl``
