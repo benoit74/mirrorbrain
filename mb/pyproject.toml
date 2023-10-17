@@ -167,6 +167,27 @@ ignore = [
   "PLR0912",
   "PLR0913",
   "PLR0915",
+  # Ignore print for now (too many to fix)
+  "T201",
+  # Ignore SQL injections for now (hard to fix without changing ORM)
+  "S608",
+  # Don't mind about asserts for now
+  "S101",
+  # Don't mind about CapWords and mixedCase for now
+  "N801", "N802", "N803", "N806", "N815", "N818",
+  # Don't mind about Python built-ins
+  "A001",
+  "FBT002",
+  "PLR2004",
+  "PLW0603",
+  "PLW0602",
+  "S324",
+  "S605",
+  "E501", # Line is too long
+  "S310", # Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected
+  "ARG001", "ARG002",
+
+
 ]
 unfixable = [
   # Don't touch unused imports
