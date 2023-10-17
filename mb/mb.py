@@ -21,12 +21,12 @@ __url__ = 'http://mirrorbrain.org'
 
 
 import cmdln
-import mb.geoip
-import mb.mberr
+import mblib.geoip
+import mblib.mberr
 import signal
 
 def catchterm(*args):
-    raise mb.mberr.SignalInterrupt
+    raise mblib.mberr.SignalInterrupt
 
 for name in 'SIGBREAK', 'SIGHUP', 'SIGTERM':
     num = getattr(signal, name, None)
@@ -35,7 +35,7 @@ for name in 'SIGBREAK', 'SIGHUP', 'SIGTERM':
 
 def lookup_mirror(self, identifier):
 
-    r = mb.conn.servers_match(self.conn.Server, identifier)
+    r = mblib.conn.servers_match(self.conn.Server, identifier)
 
     if len(r) == 0:
         sys.exit('Not found.')
@@ -71,17 +71,17 @@ class MirrorDoctor(cmdln.Cmdln):
     def postoptparse(self):
         """runs after parsing global options"""
 
-        import os, mb.conf
+        import os, mblib.conf
         if not self.options.brain_instance:
             self.options.brain_instance = os.getenv('MB', default=None)
-        self.config = mb.conf.Config(conffile = self.options.configpath, instance = self.options.brain_instance)
+        self.config = mblib.conf.Config(conffile = self.options.configpath, instance = self.options.brain_instance)
 
-        from mb.util import VersionParser
+        from mblib.util import VersionParser
         version = VersionParser(__version__)
 
         # set up the database connection
-        import mb.conn
-        self.conn = mb.conn.Conn(self.config.dbconfig, 
+        import mblib.conn
+        self.conn = mblib.conn.Conn(self.config.dbconfig, 
                                  version = version, 
                                  debug = self.options.debug)
 
@@ -151,7 +151,7 @@ class MirrorDoctor(cmdln.Cmdln):
 
         import time
         import urllib.parse
-        import mb.asn
+        import mblib.asn
 
 
         try:
@@ -171,12 +171,12 @@ class MirrorDoctor(cmdln.Cmdln):
         if ':' in host:
             host, port = host.split(':')
         if not opts.region:
-            opts.region = mb.geoip.lookup_region_code(host)
+            opts.region = mblib.geoip.lookup_region_code(host)
         if not opts.country:
-            opts.country = mb.geoip.lookup_country_code(host)
-        lat, lng = mb.geoip.lookup_coordinates(host)
+            opts.country = mblib.geoip.lookup_country_code(host)
+        lat, lng = mblib.geoip.lookup_coordinates(host)
 
-        r = mb.asn.iplookup(self.conn, host)
+        r = mblib.asn.iplookup(self.conn, host)
         asn, prefix = r.asn, r.prefix
         if not asn: asn = 0
         if not prefix: prefix = ''
@@ -265,8 +265,8 @@ class MirrorDoctor(cmdln.Cmdln):
         elif opts.r:
             mirrors = self.conn.Server.select("""region LIKE '%%%s%%'""" % opts.r)
         elif args:
-            import mb.conn
-            mirrors = mb.conn.servers_match(self.conn.Server, args[0])
+            import mblib.conn
+            mirrors = mblib.conn.servers_match(self.conn.Server, args[0])
         else:
             mirrors = self.conn.Server.select()
 
@@ -301,8 +301,8 @@ class MirrorDoctor(cmdln.Cmdln):
             if opts.prefix_only:
                 s.append('prefix_only=%s' % mirror.prefixOnly)
             if opts.number_of_files:
-                import mb.core
-                s.append('nfiles=%s' % mb.core.mirror_get_nfiles(self.conn, mirror))
+                import mblib.core
+                s.append('nfiles=%s' % mblib.core.mirror_get_nfiles(self.conn, mirror))
             s = ' '.join(s)
 
             if opts.show_disabled:
@@ -323,7 +323,7 @@ class MirrorDoctor(cmdln.Cmdln):
         """
 
         mirror = lookup_mirror(self, identifier)
-        print(mb.conn.server_show_template % mb.conn.server2dict(mirror))
+        print(mblib.conn.server_show_template % mblib.conn.server2dict(mirror))
 
 
     @cmdln.option('--all-prefixes', action='store_true',
@@ -341,15 +341,15 @@ class MirrorDoctor(cmdln.Cmdln):
         Such a table comes with mod_asn, which can be very useful in conjunction
         with MirrorBrain. See http://mirrorbrain.org/mod_asn/
 
-        Returns the string representation of an IpAddress instance from mb.util: 
+        Returns the string representation of an IpAddress instance from mblib.util: 
           Prefix (ASxxx) IPv6address
 
         ${cmd_usage}
         ${cmd_option_list}
         """
-        import mb.asn
+        import mblib.asn
 
-        r = mb.asn.iplookup(self.conn, ip)
+        r = mblib.asn.iplookup(self.conn, ip)
 
         if opts.asn:
             print(r.asn)
@@ -358,7 +358,7 @@ class MirrorDoctor(cmdln.Cmdln):
         else:
             print('%s (AS%s) %s' % (r.prefix, r.asn, r.ip6))
         if opts.all_prefixes:
-            r2 = mb.asn.asn_prefixes(self.conn, r.asn)
+            r2 = mblib.asn.asn_prefixes(self.conn, r.asn)
             print(', '.join(r2))
 
 
@@ -391,8 +391,8 @@ class MirrorDoctor(cmdln.Cmdln):
         ${cmd_usage}
         ${cmd_option_list}
         """
-        from mb.asn import iplookup
-        from mb.util import hostname_from_url
+        from mblib.asn import iplookup
+        from mblib.util import hostname_from_url
         from sqlobject.sqlbuilder import AND
 
         if opts.all:
@@ -401,7 +401,7 @@ class MirrorDoctor(cmdln.Cmdln):
         if not (opts.asn or opts.prefix or opts.coordinates or opts.country or opts.region):
             sys.exit('At least one of -c, -a, -p, --country, --region must be given as option.')
 
-        #r = mb.asn.iplookup(self.conn, ip)
+        #r = mblib.asn.iplookup(self.conn, ip)
 
         #if opts.asn:
         #    print r.asn
@@ -428,7 +428,7 @@ class MirrorDoctor(cmdln.Cmdln):
             #if opts.prefix or opts.asn:
             try:
                 res = iplookup(self.conn, hostname)
-            except mb.mberr.NameOrServiceNotKnown as e:
+            except mblib.mberr.NameOrServiceNotKnown as e:
                 print('%s:' % mirror.identifier, e.msg)
                 #print '%s: without DNS lookup, no further lookups are possible' % mirror.identifier
                 continue
@@ -461,7 +461,7 @@ class MirrorDoctor(cmdln.Cmdln):
                         mirror.asn = res.asn
 
             if opts.coordinates:
-                lat, lng = mb.geoip.lookup_coordinates(hostname)
+                lat, lng = mblib.geoip.lookup_coordinates(hostname)
                 if float(mirror.lat or 0) != lat or float(mirror.lng or 0) != lng:
                     print('%s: updating geographical coordinates (%s %s -> %s %s)' \
                         % (mirror.identifier, mirror.lat, mirror.lng, lat, lng))
@@ -469,7 +469,7 @@ class MirrorDoctor(cmdln.Cmdln):
                         mirror.lat, mirror.lng = lat, lng
 
             if opts.region:
-                region = mb.geoip.lookup_region_code(hostname)
+                region = mblib.geoip.lookup_region_code(hostname)
                 if mirror.region != region:
                     print('%s: updating region (%s -> %s)' \
                         % (mirror.identifier, mirror.region, region))
@@ -477,7 +477,7 @@ class MirrorDoctor(cmdln.Cmdln):
                         mirror.region = region
 
             if opts.country:
-                country = mb.geoip.lookup_country_code(hostname)
+                country = mblib.geoip.lookup_country_code(hostname)
                 if mirror.country != country:
                     print('%s: updating country (%s -> %s)' \
                         % (mirror.identifier, mirror.country, country))
@@ -498,8 +498,8 @@ class MirrorDoctor(cmdln.Cmdln):
         """
 
         mirror = lookup_mirror(self, identifier)
-        import mb.testmirror
-        r = mb.testmirror.access_http(mirror.identifier, mirror.baseurl)
+        import mblib.testmirror
+        r = mblib.testmirror.access_http(mirror.identifier, mirror.baseurl)
         print(r)
         print('content: %r...' % r.content[:240])
 
@@ -543,10 +543,10 @@ class MirrorDoctor(cmdln.Cmdln):
         """
 
         from sqlobject.sqlbuilder import AND
-        import mb.testmirror
+        import mblib.testmirror
         import os.path
 
-        mb.testmirror.dont_use_proxies()
+        mblib.testmirror.dont_use_proxies()
 
         if opts.mirror:
             mirrors = [ lookup_mirror(self, opts.mirror) ]
@@ -558,7 +558,7 @@ class MirrorDoctor(cmdln.Cmdln):
                              self.conn.Server.q.enabled))
 
         try:
-            mirrors_have_file = mb.testmirror.mirrors_have_file(mirrors, filename, 
+            mirrors_have_file = mblib.testmirror.mirrors_have_file(mirrors, filename, 
                                                                url_type=opts.url_type, get_digest=opts.md5,
                                                                get_content=opts.content)
             print
@@ -596,24 +596,24 @@ class MirrorDoctor(cmdln.Cmdln):
         """
         mirror = lookup_mirror(self, identifier)
         
-        import mb.conn
-        old_dict = mb.conn.server2dict(mirror)
-        old = mb.conn.server_show_template % old_dict
+        import mblib.conn
+        old_dict = mblib.conn.server2dict(mirror)
+        old = mblib.conn.server_show_template % old_dict
 
-        import mb.util
+        import mblib.util
         boilerplate = """#
 # Note: - You cannot modify 'identifier' or 'id'. You can use 'mb rename' though.
 #       - AS, prefix, lat and lng should be modified through 'mb update' 
 #         ('mb update -A --all-mirrors' for all).
 #
 """
-        new = mb.util.edit_file(old, boilerplate=boilerplate)
+        new = mblib.util.edit_file(old, boilerplate=boilerplate)
         if not new:
             print('Quitting.')
         else:
-            new_dict = mb.conn.servertext2dict(new)
+            new_dict = mblib.conn.servertext2dict(new)
 
-            for i in mb.conn.server_editable_attrs:
+            for i in mblib.conn.server_editable_attrs:
                 if not old_dict[i] and not new_dict[i]:
                     continue
 
@@ -674,7 +674,7 @@ class MirrorDoctor(cmdln.Cmdln):
             sys.exit(0)
         
 
-        import mb.util
+        import mblib.util
         boilerplate = """\
 #
 # Note: %(delim)r delimits subtree name and marker file(s).
@@ -686,7 +686,7 @@ class MirrorDoctor(cmdln.Cmdln):
 
 """ % { 'delim': opts.delimiter }
 
-        new = mb.util.edit_file(old, boilerplate=boilerplate)
+        new = mblib.util.edit_file(old, boilerplate=boilerplate)
 
         if not new:
             print('Quitting.')
@@ -722,8 +722,8 @@ class MirrorDoctor(cmdln.Cmdln):
         if not identifier:
             sys.exit('need to specify identifier')
 
-        import mb.core
-        mb.core.delete_mirror(self.conn, identifier)
+        import mblib.core
+        mblib.core.delete_mirror(self.conn, identifier)
 
 
     @cmdln.option('-C', '--comment', metavar='ARG',
@@ -803,12 +803,12 @@ class MirrorDoctor(cmdln.Cmdln):
         ${cmd_option_list}
         """
         from sqlobject.sqlbuilder import AND
-        import mb.util
+        import mblib.util
         import textwrap
-        import mb.testmirror
-        mb.testmirror.dont_use_proxies()
+        import mblib.testmirror
+        mblib.testmirror.dont_use_proxies()
 
-        mb.util.timer_start()
+        mblib.util.timer_start()
 
         cmd = []
         cmd.append(opts.scanner or '/usr/bin/scanner')
@@ -859,7 +859,7 @@ class MirrorDoctor(cmdln.Cmdln):
             mirrors_to_scan = [ i for i in mirrors ]
         else:
             print('Checking for existance of %r directory' % opts.directory)
-            mirrors_have_file = mb.testmirror.mirrors_have_file(mirrors, opts.directory, url_type='scan')
+            mirrors_have_file = mblib.testmirror.mirrors_have_file(mirrors, opts.directory, url_type='scan')
             print
             for mirror in mirrors:
                 for sample in mirrors_have_file:
@@ -890,8 +890,8 @@ class MirrorDoctor(cmdln.Cmdln):
             print(cmd)
         
         if opts.directory and len(mirrors) != 1:
-            print('Completed in', mb.util.timer_elapsed())
-            mb.util.timer_start()
+            print('Completed in', mblib.util.timer_elapsed())
+            mblib.util.timer_start()
 
         sys.stdout.flush()
 
@@ -900,14 +900,14 @@ class MirrorDoctor(cmdln.Cmdln):
 
         if opts.enable and rc == 0:
             import time
-            import mb.testmirror
+            import mblib.testmirror
             tt = time.ctime()
             comment = ('*** scanned and enabled at %s.' % tt)
             for mirror in mirrors_to_scan:
                 mirror.comment = ' '.join([mirror.comment or '', '\n\n' + comment])
 
                 print('%s %s: testing status of base URL...' % (tt, mirror.identifier))
-                t = mb.testmirror.access_http(mirror.identifier, mirror.baseurl)
+                t = mblib.testmirror.access_http(mirror.identifier, mirror.baseurl)
                 if t.http_code == 200:
                     mirror.statusBaseurl = 1
                     mirror.enabled = 1
@@ -923,7 +923,7 @@ class MirrorDoctor(cmdln.Cmdln):
                                 initial_indent='    ', subsequent_indent='  '))
 
         if opts.quietness < 2:
-            print('Completed in', mb.util.timer_elapsed())
+            print('Completed in', mblib.util.timer_elapsed())
 
 
 
@@ -988,8 +988,8 @@ class MirrorDoctor(cmdln.Cmdln):
         import errno
         import re
         import shutil
-        import mb.hashes
-        import mb.files
+        import mblib.hashes
+        import mblib.files
 
         if not opts.target_dir:
             sys.exit('You must specify the target directory (-t)')
@@ -1049,7 +1049,7 @@ class MirrorDoctor(cmdln.Cmdln):
                 dst_names = os.listdir(dst_dir)
                 dst_names.sort()
                 dst_names_db = [ (os.path.basename(i), j) 
-                                 for i, j in mb.files.dir_filelist(self.conn, dst_dir_db)]
+                                 for i, j in mblib.files.dir_filelist(self.conn, dst_dir_db)]
                 dst_names_db_dict = dict(dst_names_db)
                 dst_names_db_keys = dst_names_db_dict.keys()
                 #print dst_names_db_keys
@@ -1106,7 +1106,7 @@ class MirrorDoctor(cmdln.Cmdln):
 
                 # stat only once
                 try:
-                    hasheable = mb.hashes.Hasheable(src_basename, 
+                    hasheable = mblib.hashes.Hasheable(src_basename, 
                                                     src_dir=src_dir, 
                                                     dst_dir=dst_dir,
                                                     base_dir=opts.base_dir,
@@ -1179,7 +1179,7 @@ class MirrorDoctor(cmdln.Cmdln):
 
                         relpath = os.path.join(dst_dir_db, i)
                         print('Recursively removing hashes in database: %s/*' % relpath)
-                        mb.files.hashes_dir_delete(self.conn, relpath)
+                        mblib.files.hashes_dir_delete(self.conn, relpath)
 
                     unlinked_dirs += 1
                     
@@ -1206,7 +1206,7 @@ class MirrorDoctor(cmdln.Cmdln):
             if len(ids_to_delete):
                 print('Deleting %s obsolete hashes from hash table' % len(ids_to_delete))
                 if not opts.dry_run:
-                    mb.files.hashes_list_delete(self.conn, ids_to_delete)
+                    mblib.files.hashes_list_delete(self.conn, ids_to_delete)
 
             if opts.verbose:
                 print('unlocking', lockfile)
@@ -1286,13 +1286,13 @@ class MirrorDoctor(cmdln.Cmdln):
         ${cmd_option_list}
         """
 
-        import mb.dbmaint
+        import mblib.dbmaint
 
         # this subcommand was renamed from "mb vacuum" to "mb db <action>"
         # let's keep the old way working
         if subcmd == 'vacuum':
-                mb.dbmaint.stale(self.conn, opts.quietness)
-                mb.dbmaint.vacuum(self.conn, opts.quietness)
+                mblib.dbmaint.stale(self.conn, opts.quietness)
+                mblib.dbmaint.vacuum(self.conn, opts.quietness)
                 sys.exit(0)
 
         if len(args) < 1:
@@ -1300,15 +1300,15 @@ class MirrorDoctor(cmdln.Cmdln):
         action = args[0]
 
         if action == 'sizes':
-            mb.dbmaint.stats(self.conn)
+            mblib.dbmaint.stats(self.conn)
         elif action == 'vacuum':
             if not opts.dry_run:
-                mb.dbmaint.stale(self.conn, opts.quietness)
-                mb.dbmaint.vacuum(self.conn, opts.quietness)
+                mblib.dbmaint.stale(self.conn, opts.quietness)
+                mblib.dbmaint.vacuum(self.conn, opts.quietness)
             else:
-                mb.dbmaint.stale(self.conn, opts.quietness)
+                mblib.dbmaint.stale(self.conn, opts.quietness)
         elif action == 'shell':
-            mb.dbmaint.shell(self.config.dbconfig)
+            mblib.dbmaint.shell(self.config.dbconfig)
 
         else:
             sys.exit('unknown action %r' % action)
@@ -1352,9 +1352,9 @@ class MirrorDoctor(cmdln.Cmdln):
         if path.startswith('/'):
             path = path[1:]
 
-        import mb.files
-        import mb.testmirror
-        mb.testmirror.dont_use_proxies()
+        import mblib.files
+        import mblib.testmirror
+        mblib.testmirror.dont_use_proxies()
 
         if opts.md5:
             opts.probe = True
@@ -1369,10 +1369,10 @@ class MirrorDoctor(cmdln.Cmdln):
             mirror = None
 
         if action == 'ls':
-            rows = mb.files.ls(self.conn, path)
+            rows = mblib.files.ls(self.conn, path)
 
             if opts.probe:
-                samples = mb.testmirror.lookups_probe(rows, get_digest=opts.md5, get_content=False)
+                samples = mblib.testmirror.lookups_probe(rows, get_digest=opts.md5, get_content=False)
                 print
             else:
                 samples = []
@@ -1404,10 +1404,10 @@ class MirrorDoctor(cmdln.Cmdln):
 
 
         elif action == 'add':
-            mb.files.add(self.conn, path, mirror)
+            mblib.files.add(self.conn, path, mirror)
 
         elif action == 'rm':
-            mb.files.rm(self.conn, path, mirror)
+            mblib.files.rm(self.conn, path, mirror)
 
         else:
             sys.exit('ACTION must be either ls, rm or add.')
@@ -1445,7 +1445,7 @@ class MirrorDoctor(cmdln.Cmdln):
         ${cmd_option_list}
         """
         
-        import mb.files
+        import mblib.files
 
         if args:
             mirror = lookup_mirror(self, args[0])
@@ -1453,13 +1453,13 @@ class MirrorDoctor(cmdln.Cmdln):
             mirror = None
 
         if opts.dirpath:
-            for i in mb.files.dir_show_mirrors(self.conn, opts.dirpath):
+            for i in mblib.files.dir_show_mirrors(self.conn, opts.dirpath):
                 print(i[0])
         elif opts.missingdirpath:
-            for i in mb.files.dir_show_mirrors(self.conn, opts.missingdirpath, missing=True):
+            for i in mblib.files.dir_show_mirrors(self.conn, opts.missingdirpath, missing=True):
                 print(i[0])
         else:
-            for i in mb.files.dir_ls(self.conn, segments=opts.segments, mirror=mirror):
+            for i in mblib.files.dir_ls(self.conn, segments=opts.segments, mirror=mirror):
                 print(i[0])
 
 
@@ -1517,8 +1517,8 @@ class MirrorDoctor(cmdln.Cmdln):
         
 
         if args:
-            import mb.conn
-            mirrors = mb.conn.servers_match(self.conn.Server, args[0])
+            import mblib.conn
+            mirrors = mblib.conn.servers_match(self.conn.Server, args[0])
         else:
             from sqlobject.sqlbuilder import AND, NOT
             mirrors = self.conn.Server.select(AND(self.conn.Server.q.enabled,
@@ -1527,12 +1527,12 @@ class MirrorDoctor(cmdln.Cmdln):
                                                   self.conn.Server.q.country != '**'),
                                               orderBy=['region', 'country', 'operatorName'])
 
-        import mb.mirrorlists
+        import mblib.mirrorlists
 
-        if opts.format not in mb.mirrorlists.supported:
+        if opts.format not in mblib.mirrorlists.supported:
             sys.exit('format %r not supported' % opts.format)
 
-        mb.mirrorlists.genlist(conn=self.conn, opts=opts, mirrors=mirrors, markers=markers, format=opts.format)
+        mblib.mirrorlists.genlist(conn=self.conn, opts=opts, mirrors=mirrors, markers=markers, format=opts.format)
 
 
 
@@ -1575,7 +1575,7 @@ class MirrorDoctor(cmdln.Cmdln):
         ${cmd_option_list}
         """
 
-        import mb.exports
+        import mblib.exports
 
         if not opts.format:
             sys.exit('You need to specify an output format. See --help output.')
@@ -1586,13 +1586,13 @@ class MirrorDoctor(cmdln.Cmdln):
             sys.exit('To export for a version control system, specify a target directory')
 
         if opts.format == 'django':
-            print(mb.exports.django_header)
+            print(mblib.exports.django_header)
 
             # FIXME: add new fields: operator_name, operator_url, public_notes
             print("""Project(name='%s').save()""" % opts.project)
 
         elif opts.format == 'postgresql':
-            print(mb.exports.postgresql_header)
+            print(mblib.exports.postgresql_header)
 
         elif opts.format in ['mirmon', 'mirmon-apache']:
             pass
@@ -1617,29 +1617,29 @@ class MirrorDoctor(cmdln.Cmdln):
             if m.comment == None:
                 #print 'null comment', m
                 m.comment = ''
-            d = mb.conn.server2dict(m)
+            d = mblib.conn.server2dict(m)
             d.update(dict(project=opts.project))
 
             #print >>sys.stderr, d
 
             # replace None's
-            #for i in mb.conn.server_editable_attrs:
+            #for i in mblib.conn.server_editable_attrs:
             for i in ['asn', 'prefix', 'asOnly', 'prefixOnly', 'lat', 'lng', 'scanFpm']:
                 if d[i] == None: d[i] = '0'
             for i in ['prefix', 'baseurlRsync', 'admin', 'adminEmail']:
                 if d[i] == None: d[i] = ''
 
             if opts.format == 'django':
-                print(mb.exports.django_template % d)
+                print(mblib.exports.django_template % d)
 
             elif opts.format == 'postgresql':
-                print(mb.exports.postgresql_template % d)
+                print(mblib.exports.postgresql_template % d)
 
             elif opts.format in ['mirmon', 'mirmon-apache']:
                 if opts.format == 'mirmon':
-                    mirmon_template = mb.exports.mirmon_template
+                    mirmon_template = mblib.exports.mirmon_template
                 elif opts.format == 'mirmon-apache':
-                    mirmon_template = mb.exports.mirmon_apache_template
+                    mirmon_template = mblib.exports.mirmon_apache_template
 
                 if not m.enabled:
                     continue
@@ -1654,7 +1654,7 @@ class MirrorDoctor(cmdln.Cmdln):
                                        country=d['country']))
 
             elif opts.format == 'vcs':
-                s = mb.conn.server_show_template % mb.conn.server2dict(m)
+                s = mblib.conn.server_show_template % mblib.conn.server2dict(m)
                 s = '\n'.join([ i for i in s.splitlines() if not i.startswith('statusBaseurl') ]) + '\n'
                 open(m.identifier, 'w').write(s)
 
@@ -1703,8 +1703,8 @@ class MirrorDoctor(cmdln.Cmdln):
         if docroot and not opts.no_docroot:
             args = [ os.path.join(docroot, i) for i in args ]
 
-        import mb.timestamps
-        mb.timestamps.create(args, user=opts.user, group=opts.group)
+        import mblib.timestamps
+        mblib.timestamps.create(args, user=opts.user, group=opts.group)
 
 
 
@@ -1717,7 +1717,7 @@ if __name__ == '__main__':
     try:
         r = mirrordoctor.main()
 
-    except mb.mberr.SignalInterrupt:
+    except mblib.mberr.SignalInterrupt:
         print >>sys.stderr, 'killed!'
         r = 1
 
@@ -1725,14 +1725,14 @@ if __name__ == '__main__':
         print >>sys.stderr, 'interrupted!'
         r = 1
 
-    except mb.mberr.UserAbort:
+    except mblib.mberr.UserAbort:
         print >>sys.stderr, 'aborted.'
         r = 1
 
-    except (mb.mberr.ConfigError, 
-            mb.mberr.NoConfigfile,
-            mb.mberr.MirrorNotFoundError,
-            mb.mberr.SocketError) as e:
+    except (mblib.mberr.ConfigError, 
+            mblib.mberr.NoConfigfile,
+            mblib.mberr.MirrorNotFoundError,
+            mblib.mberr.SocketError) as e:
         print >>sys.stderr, e.msg
         r = 1
 

@@ -1,9 +1,9 @@
 # encoding: utf-8
 
 import sys, os, os.path
-import mb
-import mb.util
-import mb.files
+import mblib
+import mblib.util
+import mblib.files
 import tempfile
 import cgi
 
@@ -59,7 +59,7 @@ def txt(conn, opts, mirrors, markers):
         #yield mirror.identifier, mirror.baseurl, mirror.baseurlFtp, mirror.baseurlRsync, mirror.score
 
         for marker in markers:
-            if mb.files.check_for_marker_files(conn, marker.markers, mirror.id):
+            if mblib.files.check_for_marker_files(conn, marker.markers, mirror.id):
                 yield '+' + marker.subtreeName
             else:
                 yield '-' + marker.subtreeName
@@ -68,7 +68,7 @@ def txt(conn, opts, mirrors, markers):
 def txt2(conn, opts, mirrors, markers):
     for mirror in mirrors:
         for marker in markers:
-            if mb.files.check_for_marker_files(conn, marker.markers, mirror.id):
+            if mblib.files.check_for_marker_files(conn, marker.markers, mirror.id):
                 yield '%s: %s' % (mirror.identifier, marker.subtreeName)
 
 
@@ -181,7 +181,7 @@ def xhtml(conn, opts, mirrors, markers):
         if not opts.inline_images_from:
             return 'flags/%s.%s' % (country_code, opts.image_type)
         else:
-            return mb.util.data_url(opts.inline_images_from, 
+            return mblib.util.data_url(opts.inline_images_from, 
                                     country_code + '.' + opts.image_type)
 
 
@@ -254,9 +254,9 @@ def xhtml(conn, opts, mirrors, markers):
                 'identifier': mirror.identifier,
                 'operatorName': cgi.escape(mirror.operatorName),
                 'operatorUrl': mirror.operatorUrl,
-                'http_link':  href(mb.util.strip_auth(mirror.baseurl), 'HTTP'),
-                'ftp_link':   href(mb.util.strip_auth(mirror.baseurlFtp), 'FTP'),
-                'rsync_link': href(mb.util.strip_auth(mirror.baseurlRsync), 'rsync'),
+                'http_link':  href(mblib.util.strip_auth(mirror.baseurl), 'HTTP'),
+                'ftp_link':   href(mblib.util.strip_auth(mirror.baseurlFtp), 'FTP'),
+                'rsync_link': href(mblib.util.strip_auth(mirror.baseurlRsync), 'rsync'),
                 'prio':       stars(mirror.score),
                 }
         
@@ -269,7 +269,7 @@ def xhtml(conn, opts, mirrors, markers):
         col_cnt = 0
         for marker in markers:
             col_cnt += 1
-            if mb.files.check_for_marker_files(conn, marker.markers, mirror.id):
+            if mblib.files.check_for_marker_files(conn, marker.markers, mirror.id):
                 #checkmark = '√'
                 checkmark = '&radic;'
                 empty = False

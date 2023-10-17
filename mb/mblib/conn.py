@@ -332,10 +332,10 @@ class Conn:
 
 def servertext2dict(s):
     import re
-    import mb.conn
+    import mblib.conn
 
     new_attrs = dict()
-    for a in mb.conn.server_editable_attrs:
+    for a in mblib.conn.server_editable_attrs:
         m = re.search(r'^%s *: *(.*)' % a, 
             s, re.MULTILINE)
         if m:

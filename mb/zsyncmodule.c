@@ -41,7 +41,7 @@ static PyObject *zsync_rsum06(PyObject *self, PyObject *args) {
     memcpy((void *)&digest, &a, 2);
     memcpy((void *)&digest + 2, &b, 2);
 
-    return PyString_FromStringAndSize((const char *)digest, sizeof(digest));
+    return PyUnicode_FromString((const char *)digest);
 }
 
 static PyMethodDef zsyncMethods[] = {
@@ -49,8 +49,17 @@ static PyMethodDef zsyncMethods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+static struct PyModuleDef cModPyDem =
+{
+    PyModuleDef_HEAD_INIT,
+    "zsync", /* name of module */
+    NULL,    /* module documentation, may be NULL */
+    -1,      /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    zsyncMethods
+};
+
 void initzsync() {
-    Py_InitModule("zsync", zsyncMethods);
+    PyModule_Create(&cModPyDem);
 }
 
 /* vim: set ts=4 sw=4 expandtab smarttab: */

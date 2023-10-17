@@ -1,8 +1,8 @@
 
 def iplookup(conn, s):
 
-    from mb.util import IpAddress
-    import mb.mberr
+    from mblib.util import IpAddress
+    import mblib.mberr
 
 
     if s[0].isdigit():
@@ -27,7 +27,7 @@ def iplookup(conn, s):
                         ips.append(sa[0])
         except socket.error as e:
             if e[0] == socket.EAI_NONAME:
-                raise mb.mberr.NameOrServiceNotKnown(s)
+                raise mblib.mberr.NameOrServiceNotKnown(s)
             else:
                 print('socket error msg:', str(e))
                 return None
