@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Create a local file tree as copy from a remote server via rsync.
@@ -109,7 +109,7 @@ def main():
                       action='store_true', dest='quiet', default=False,
                       help='Don\'t show output, except errors')
 
-    parser.add_option('-v', '--verbose', action='count', dest='verbosity',
+    parser.add_option('-v', '--verbose', action='count', dest='verbosity', default=0,
                       help='Print debug messages to stderr. '
                            'Option can be repeated to increase verbosity.')
 
@@ -154,8 +154,8 @@ def main():
     o = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                     close_fds=True).stdout
 
-    for line in o.readlines():
-
+    for lineb in o.readlines():
+        line = lineb.decode("utf-8")
         if not options.quiet:
             # print what we are doing
             # but omit symlinks with incorrect mtime
