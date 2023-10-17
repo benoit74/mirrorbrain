@@ -39,7 +39,7 @@ Homepage = "https://github.com/benoit74/mirrorbrain"
 Donate = "https://www.kiwix.org/en/support-us/"
 
 [project.scripts]
-mb = "mb:__main__"
+mb = "mblib.mb:main"
 
 [tool.hatch.version]
 path = "mblib/__about__.py"

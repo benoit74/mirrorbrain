@@ -12,7 +12,6 @@ easy_install http://trentm.com/downloads/cmdln/1.1.1/cmdln-1.1.1.zip
 (it is not in the Python CheeseShop so far)
 """
 
-__version__ = '2.19.0'
 __author__ = 'Peter Poeml <poeml@cmdline.net>'
 __copyright__ = 'Novell / SUSE Linux Products GmbH'
 __license__ = 'GPL'
@@ -24,6 +23,8 @@ import cmdln
 import mblib.geoip
 import mblib.mberr
 import signal
+import sys
+from mblib.__about__ import __version__
 
 def catchterm(*args):
     raise mblib.mberr.SignalInterrupt
@@ -1706,12 +1707,7 @@ class MirrorDoctor(cmdln.Cmdln):
         import mblib.timestamps
         mblib.timestamps.create(args, user=opts.user, group=opts.group)
 
-
-
-
-
-
-if __name__ == '__main__':
+def main():
     import sys
     mirrordoctor = MirrorDoctor()
     try:
@@ -1737,3 +1733,6 @@ if __name__ == '__main__':
         r = 1
 
     sys.exit(r)
+
+if __name__ == '__main__':
+    main()
