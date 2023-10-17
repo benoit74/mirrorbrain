@@ -22,6 +22,8 @@ Changes:
 
 * Use git `main` branch instead of `master`
 
+* Added an `assets` subfolder with flags (which were in `mb` subfolder originally) and `mirrorbrain.css` (which was only available online originally)
+
 Bug fixes:
 
 * Add support for headers when parsing RSync replies in ``scanner.pl``
@@ -29,6 +31,8 @@ Bug fixes:
 Known limitations:
 
 * `mod_stats` tooling has not yet been migrated to Python 3
+
+* zsync hashes are not working anymore (compilation of C code for Python is not done / not working anymore)
 
 Release 2.18.1 (r8379, Feb 3, 2014)
 -----------------------------------
