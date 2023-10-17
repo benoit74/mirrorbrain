@@ -1,7 +1,0 @@
-cmdln==2.0.0
-
-# was SQLObject 3.7.0
-SQLObject==3.10.2
-
-# was psycopg2 2.7.7
-psycopg2-binary==2.9.9

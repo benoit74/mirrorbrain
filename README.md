@@ -1,4 +1,8 @@
 # mirrorbrain
 
-This code used to live in Subversion so far, hosted on mirrorbrain.org. Maybe it's time to experiment with moving to GitHub.
-*poeml, Mon 11 May 2015 23:06:47 CEST*
+This is a fork of abandonned mirrorbrain project to make it run on:
+- Debian Bookworm
+- Python 3.11
+- MaxMind GeoIP2 databases
+
+See http://mirrorbrain.org/ for original information
