@@ -40,7 +40,7 @@ def lookup_country_code(addr):
 def lookup_region_code(addr):
     try:
         out = Popen(['geoiplookup_continent', '-f', database, addr], env=ENV, stdout=PIPE).communicate()[0]
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.ENOENT:
             sys.exit('Error: The geoiplookup_continent binary could not be found.\n'
                      'Make sure to install the geoiplookup_continent into a directory contained in $PATH.')
@@ -50,7 +50,7 @@ def lookup_region_code(addr):
 def lookup_coordinates(addr):
     try:
         out = Popen(['geoiplookup_city', '-f', database, addr], env=ENV, stdout=PIPE).communicate()[0]
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.ENOENT:
             sys.exit('Error: The geoiplookup_city binary could not be found.\n'
                      'Make sure to install the geoiplookup_city into a directory contained in $PATH.')
@@ -73,5 +73,5 @@ def lookup_coordinates(addr):
 
 if __name__ == '__main__':
     import sys
-    print 'country:', lookup_country_code(sys.argv[1])
-    print 'region:', lookup_region_code(sys.argv[1])
+    print('country:', lookup_country_code(sys.argv[1]))
+    print('region:', lookup_region_code(sys.argv[1]))

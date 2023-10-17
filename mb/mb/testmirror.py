@@ -1,8 +1,8 @@
 
 import os
 import sys
-import urllib2
-import commands
+import urllib.request, urllib.error, urllib.parse
+import subprocess
 import tempfile
 import shutil
 import socket
@@ -39,15 +39,15 @@ def req(baseurl, filename, http_method='GET', get_digest=False):
 def probe(S, http_method='GET'):
 
     if S.scheme in ['http', 'ftp']:
-        req = urllib2.Request(S.probeurl)
+        req = urllib.request.Request(S.probeurl)
         if S.scheme == 'http' and http_method=='HEAD':
             # not for FTP URLs
             req.get_method = lambda: 'HEAD'
 
         try:
-            response = urllib2.urlopen(req)
+            response = urllib.request.urlopen(req)
         except KeyboardInterrupt:
-            print >>sys.stderr, 'interrupted!'
+            print('interrupted!', file=sys.stderr)
             raise
         except:
             return S
@@ -72,7 +72,7 @@ def probe(S, http_method='GET'):
             if S.http_code == 200:
                 S.has_file = True
             else:
-                print 'unhandled HTTP response code %r for URL %r' % (S.http_code, S.probeurl)
+                print('unhandled HTTP response code %r for URL %r' % (S.http_code, S.probeurl))
         elif S.scheme == 'ftp':
             # this works for directories. Not tested for files yet
             try:
@@ -113,7 +113,7 @@ def probe(S, http_method='GET'):
 
             cmd = ' '.join(cmd)
 
-            (rc, out) = commands.getstatusoutput(cmd)
+            (rc, out) = subprocess.getstatusoutput(cmd)
             targetfile = os.path.join(tmpdir, os.path.basename(S.filename))
             if rc == 0 or os.path.exists(targetfile):
                 S.has_file = True
@@ -209,36 +209,14 @@ def lookups_probe(mirrors, get_digest=False, get_content=False):
 
 
 def probes_run(probelist):
-    mp_mod = None
-    try:
-        from multiprocessing import Pool
-        mp_mod = 'multiprocessing'
-    except:
-        pass
-    try:
-        from processing import Pool
-        mp_mod = 'processing'
-    except:
-        pass
-    if len(probelist) > 8 and not mp_mod:
-        print '>>> No multiprocessing module was found installed. For parallelizing'
-        print '>>> probing, install the "processing" or "multiprocessing" Python module.'
-
-
-    if mp_mod in ['processing', 'multiprocessing']:
-        # FIXME make the pool size configurable
-        # we don't need to spawn more processes then we have jobs to do
-        if len(probelist) < 24:
-            pool_size = len(probelist)
-        else:
-            pool_size = 24
-        p = Pool(pool_size)
-        result = p.map_async(probe_report, probelist)
-        #print result.get(timeout=20)
-        return result.get()
-
+    from multiprocessing import Pool
+    # FIXME make the pool size configurable
+    # we don't need to spawn more processes then we have jobs to do
+    if len(probelist) < 24:
+        pool_size = len(probelist)
     else:
-        res = []
-        for i in probelist:
-            res.append(probe_report(i))
-        return res
+        pool_size = 24
+    p = Pool(pool_size)
+    result = p.map_async(probe_report, probelist)
+    #print result.get(timeout=20)
+    return result.get()

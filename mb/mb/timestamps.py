@@ -45,19 +45,19 @@ def create(tstamps, user=None, group=None):
             # we might write in a directory not owned by root
             (fd, tmpfilename) = tempfile.mkstemp(prefix = os.path.basename(tstamp), 
                                                  dir = os.path.dirname(tstamp))
-        except OSError, e:
+        except OSError as e:
             sys.exit(e)
 
         if tstamp.endswith('invisible'):
-            mode = 0640
+            mode = 0o640
         else:
-            mode = 0644
+            mode = 0o644
 
         try:
             os.chown(tmpfilename, 
                      user, 
                      group)
-        except OSError, e:
+        except OSError as e:
             sys.exit(e)
 
         os.chmod(tmpfilename, mode)

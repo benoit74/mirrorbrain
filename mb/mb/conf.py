@@ -1,7 +1,7 @@
 
 import sys
 import os
-import ConfigParser
+import configparser
 import re
 import mb.mberr
 
@@ -35,11 +35,11 @@ class Config:
             raise mb.mberr.NoConfigfile(conffile, 'No config file found. Please refer to:\n'
                     'http://mirrorbrain.org/docs/installation/initial_config/#create-mirrorbrain-conf')
 
-        cp = ConfigParser.SafeConfigParser()
+        cp = configparser.SafeConfigParser()
         try:
             cp.read(conffile)
-        except ConfigParser.ParsingError, e:
-            print e
+        except configparser.ParsingError as e:
+            print(e)
             sys.exit(2)
 
         #
@@ -69,9 +69,9 @@ class Config:
             for b in boolean_opts:
                 try:
                     self.general[i][b] = cp.getboolean(i, b)
-                except ValueError, e:
+                except ValueError as e:
                     raise mb.mberr.ConfigError('cannot parse setting in [%s] section: %r' % (i, b + str(e)), conffile)
-                except ConfigParser.NoOptionError, e:
+                except configparser.NoOptionError as e:
                     pass
             # set default values where the config didn't define anything
             for d in DEFAULTS:

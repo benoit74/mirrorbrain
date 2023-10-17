@@ -7,19 +7,10 @@ import stat
 import zsync
 import binascii
 
-try:
-    import hashlib
-    md5 = hashlib
-    sha1 = hashlib
-    sha256 = hashlib
-except ImportError:
-    import md5
-    md5 = md5
-    import sha
-    sha1 = sha
-    sha1.sha1 = sha1.sha
-    # I think Python 2.4 didn't have a sha256 counterpart
-    sha256 = None
+import hashlib
+md5 = hashlib
+sha1 = hashlib
+sha256 = hashlib
 
 DEFAULT_PIECESIZE = 262144
 MD5_DIGESTSIZE    = 16
@@ -78,11 +69,11 @@ class Hasheable:
 
         if int(dst_mtime) == int(self.mtime) and not force:
             if verbose:
-                print 'Up to date hash file: %r' % self.dst
+                print('Up to date hash file: %r' % self.dst)
             return 
 
         if dry_run: 
-            print 'Would create hash file', self.dst
+            print('Would create hash file', self.dst)
             return
 
         if self.hb.empty:
@@ -94,14 +85,14 @@ class Hasheable:
         open(self.dst, 'w').close()
 
         if verbose:
-            print 'Hash file updated: %r' % self.dst
+            print('Hash file updated: %r' % self.dst)
 
         os.utime(self.dst, (self.atime, self.mtime))
 
         if copy_permissions:
             os.chmod(self.dst, self.mode)
         else:
-            os.chmod(self.dst, 0644)
+            os.chmod(self.dst, 0o644)
 
 
     def check_db(self, conn, verbose=False, dry_run=False, force=False):
@@ -126,14 +117,14 @@ class Hasheable:
                       [file_id])
             res_hash = c.fetchone()
         else:
-            print 'File %r not in database. Not on mirrors yet? Will be inserted.' % self.src_rel
+            print('File %r not in database. Not on mirrors yet? Will be inserted.' % self.src_rel)
             file_id = None
             res_hash = None
 
         if not res_hash:
 
             if dry_run: 
-                print 'Would create hashes in db for: ', self.src_rel
+                print('Would create hashes in db for: ', self.src_rel)
                 return
 
             if self.hb.empty:
@@ -172,13 +163,13 @@ class Hasheable:
                       )
             c.execute("COMMIT")
             if verbose:
-                print 'Hash was not present yet in database - inserted'
+                print('Hash was not present yet in database - inserted')
         else:
             mtime, size = res_hash[1], res_hash[2]
             
             if int(self.mtime) == mtime and self.size == size and not force:
                 if verbose:
-                    print 'Up to date in db: %r' % self.src_rel
+                    print('Up to date in db: %r' % self.src_rel)
                 return
 
             if self.hb.empty:
@@ -209,7 +200,7 @@ class Hasheable:
                        binascii.hexlify(''.join(self.hb.zsums)),
                        file_id])
             if verbose:
-                print 'Hash updated in database for %r' % self.src_rel
+                print('Hash updated in database for %r' % self.src_rel)
 
         c.execute('commit')
 
@@ -267,7 +258,7 @@ class HashBag:
 
         try:
             f = open(self.src, 'rb')
-        except IOError, e:
+        except IOError as e:
             sys.stderr.write('%s\n' % e)
             return None
 

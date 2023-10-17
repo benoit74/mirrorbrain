@@ -110,7 +110,7 @@ Database
 Python and Perl modules
 -----------------------
 
-The toolset for database maintenance needs Python (an old 2.4.x is sufficient) and the following Python modules: 
+The toolset for database maintenance needs Python (3.11+) and the following Python modules: 
 
 * :mod:`cmdln`
 * :mod:`sqlobject`

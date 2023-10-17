@@ -98,23 +98,16 @@ def data_url(basedir, path):
 
 
 def hostname_from_url(url):
-    import urlparse
-    h = urlparse.urlparse(url)[1]
+    import urllib.parse
+    h = urllib.parse.urlparse(url)[1]
     if ':' in h:
         h = h.split(':')[0]
     return h
 
 
 def dgst(file):
-    # Python 2.5 depracates the md5 modules
-    # Python 2.4 doesn't have hashlib yet
-    try:
-        import hashlib
-        md5_hash = hashlib.md5()
-    except ImportError:
-        import md5
-        md5_hash = md5.new()
-
+    import hashlib
+    md5_hash = hashlib.md5()
     BUFSIZE = 1024*1024
     f = open(file, 'r')
     while 1:
@@ -159,7 +152,7 @@ def edit_file(data, boilerplate = None):
             sys.stdout.writelines(d)
             sys.stdout.write('\n\n')
 
-            input = raw_input('Save changes?\n'
+            input = input('Save changes?\n'
                               'y)es, n)o, e)dit again: ')
             if input in 'yY':
                 os.unlink(filename)
@@ -181,8 +174,8 @@ def get_rsync_version():
     if rsync_version:
         return rsync_version
     else:
-        import commands
-        status, output = commands.getstatusoutput('rsync --version')
+        import subprocess
+        status, output = subprocess.getstatusoutput('rsync --version')
         if status != 0:
             sys.exit('rsync command not found')
         rsync_version = output.splitlines()[0].split()[2]
@@ -213,13 +206,13 @@ def strip_auth(s):
     with the urlparse module and and returned reassembled.
     """
 
-    import urlparse
+    import urllib.parse
 
-    u = urlparse.urlsplit(s)
+    u = urllib.parse.urlsplit(s)
     netloc = u[1]
     if '@' in netloc:
         netloc = netloc.split('@')[1]
-    return urlparse.urlunsplit((u[0], netloc, u[2], u[3], u[4]))
+    return urllib.parse.urlunsplit((u[0], netloc, u[2], u[3], u[4]))
 
 def pgsql_regexp_esc(s):
     if s:

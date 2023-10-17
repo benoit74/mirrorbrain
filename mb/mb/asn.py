@@ -25,27 +25,27 @@ def iplookup(conn, s):
                 else:
                     if sa[0] not in ips:
                         ips.append(sa[0])
-        except socket.error, e:
+        except socket.error as e:
             if e[0] == socket.EAI_NONAME:
                 raise mb.mberr.NameOrServiceNotKnown(s)
             else:
-                print 'socket error msg:', str(e)
+                print('socket error msg:', str(e))
                 return None
 
 
         #print ips
         #print ip6s
         if len(ips) > 1 or len(ip6s) > 1:
-            print >>sys.stderr, '>>> warning: %r resolves to multiple IP addresses: ' % s,
+            print('>>> warning: %r resolves to multiple IP addresses: ' % s, end=' ', file=sys.stderr)
             if len(ips) > 1:
-                print >>sys.stderr, ', '.join(ips),
+                print(', '.join(ips), end=' ', file=sys.stderr)
             if len(ip6s) > 1:
-                print >>sys.stderr, ', '.join(ip6s),
-            print >>sys.stderr, '\n>>> see http://mirrorbrain.org/archive/mirrorbrain/0042.html why this could\n' \
+                print(', '.join(ip6s), end=' ', file=sys.stderr)
+            print('\n>>> see http://mirrorbrain.org/archive/mirrorbrain/0042.html why this could\n' \
                                 '>>> could be a problem, and what to do about it. But note that this is not\n' \
                                 '>>> necessarily a problem and could actually be intended depending on the\n' \
                                 '>>> mirror\'s configuration (see http://mirrorbrain.org/issues/issue152).\n' \
-                                '>>> It\'s best to talk to the mirror\'s admins.\n'
+                                '>>> It\'s best to talk to the mirror\'s admins.\n', file=sys.stderr)
         a = IpAddress()
         if ips: a.ip = ips[0]
         if ip6s: a.ip6 = ip6s[0]

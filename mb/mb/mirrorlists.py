@@ -34,7 +34,7 @@ def genlist(conn, opts, mirrors, markers, format='txt2'):
         (fd, tmpfname) = tempfile.mkstemp(prefix = '.' + os.path.basename(fname),
                                           dir = os.path.dirname(fname))
         try:
-            os.chmod(tmpfname, 0644)
+            os.chmod(tmpfname, 0o644)
             f = os.fdopen(fd, 'w')
 
             for i in gen:
@@ -44,7 +44,7 @@ def genlist(conn, opts, mirrors, markers, format='txt2'):
             try:
                 os.rename(tmpfname, fname)
             except:
-                print >>sys.stderr, 'could not rename file'
+                print('could not rename file', file=sys.stderr)
                 raise
         finally:
             if os.path.exists(tmpfname):
