@@ -4,7 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mb"
-authors = [{ name = "MirrorBrain project", email= "info@mirrorbrain.org"}, { name = "Kiwix", email = "dev@kiwix.org" }]
+authors = [
+  { name = "MirrorBrain project", email = "info@mirrorbrain.org" },
+  { name = "Kiwix", email = "dev@kiwix.org" },
+]
 requires-python = ">=3.11"
 description = "mb, a tool to maintain the MirrorBrain database"
 license = { text = "GPL-3.0-or-later" }
@@ -15,7 +18,7 @@ classifiers = [
 ]
 dependencies = [
   "cmdln==2.0.0",
-  "SQLObject==3.10.2", # was SQLObject 3.7.0
+  "SQLObject==3.10.2",      # was SQLObject 3.7.0
   "psycopg2-binary==2.9.9", # was psycopg2 2.7.7
   "geoip2==4.7.0",
 ]
@@ -168,15 +171,17 @@ ignore = [
   "PLR0912",
   "PLR0913",
   "PLR0915",
-  # Ignore print for now (too many to fix)
+  # Ignore all these 'harmless' issues for now, there are too many to fix in one shot
+  # and no test cases
   "T201",
-  # Ignore SQL injections for now (hard to fix without changing ORM)
   "S608",
-  # Don't mind about asserts for now
   "S101",
-  # Don't mind about CapWords and mixedCase for now
-  "N801", "N802", "N803", "N806", "N815", "N818",
-  # Don't mind about Python built-ins
+  "N801",
+  "N802",
+  "N803",
+  "N806",
+  "N815",
+  "N818",
   "A001",
   "FBT002",
   "PLR2004",
@@ -184,9 +189,10 @@ ignore = [
   "PLW0602",
   "S324",
   "S605",
-  "E501", # Line is too long
-  "S310", # Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected
-  "ARG001", "ARG002",
+  "E501",    # Line is too long
+  "S310",    # Audit URL open for permitted schemes. Allowing use of `file:` or custom schemes is often unexpected
+  "ARG001",
+  "ARG002",
 
 
 ]
