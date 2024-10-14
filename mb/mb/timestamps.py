@@ -1,10 +1,9 @@
-# encoding: utf-8
-
+import grp
 import os
+import pwd
 import sys
-import time
 import tempfile
-import pwd, grp
+import time
 
 explanation = """
 Should you wonder about this file, it supplies timestamps that can be
@@ -24,14 +23,13 @@ Thanks.
 
 """
 
-def create(tstamps, user=None, group=None):
 
+def create(tstamps, user=None, group=None):
     epoch = int(time.time())
     utc = time.strftime("%a, %d %b %Y %H:%M:%S UTC", time.gmtime())
 
-
     if user:
-        user = pwd.getpwnam(user).pw_uid 
+        user = pwd.getpwnam(user).pw_uid
     else:
         user = os.geteuid()
 
@@ -43,29 +41,27 @@ def create(tstamps, user=None, group=None):
     for tstamp in tstamps:
         try:
             # we might write in a directory not owned by root
-            (fd, tmpfilename) = tempfile.mkstemp(prefix = os.path.basename(tstamp), 
-                                                 dir = os.path.dirname(tstamp))
-        except OSError, e:
+            (fd, tmpfilename) = tempfile.mkstemp(
+                prefix=os.path.basename(tstamp), dir=os.path.dirname(tstamp)
+            )
+        except OSError as e:
             sys.exit(e)
 
-        if tstamp.endswith('invisible'):
-            mode = 0640
+        if tstamp.endswith("invisible"):
+            mode = 0o640
         else:
-            mode = 0644
+            mode = 0o644
 
         try:
-            os.chown(tmpfilename, 
-                     user, 
-                     group)
-        except OSError, e:
+            os.chown(tmpfilename, user, group)
+        except OSError as e:
             sys.exit(e)
 
         os.chmod(tmpfilename, mode)
-        
-        f = os.fdopen(fd, 'w')
-        f.write('%s\n%s\n\n' % (epoch, utc))
+
+        f = os.fdopen(fd, "w")
+        f.write(f"{epoch}\n{utc}\n\n")
         f.write(explanation)
         f.close()
 
         os.rename(tmpfilename, tstamp)
-

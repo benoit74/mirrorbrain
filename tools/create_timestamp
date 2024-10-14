@@ -77,9 +77,9 @@ for tstamp in tstamps:
                                          dir = os.path.dirname(tstamp))
 
     if tstamp.endswith('invisible'):
-        mode = 0640
+        mode = 640
     else:
-        mode = 0644
+        mode = 644
 
     os.chown(tmpfilename, 
              user, 

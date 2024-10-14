@@ -1227,7 +1227,7 @@ sub rsync_get_filelist
   alarm 600;
   sysread(S, $buf, 4096);
   alarm 0;
-  die("$identifier: protocol error [$buf]\n") if $buf !~ /^\@RSYNCD: ([\d.]+)\n/s;
+  die("$identifier: protocol error [$buf]\n") if $buf !~ /^\@RSYNCD: ([\d.]+).*\n/s;
   $peer->{rsync_protocol} = $1;
   $peer->{rsync_protocol} = 28 if $peer->{rsync_protocol} > 28;
   swrite(*S, "$module\n");

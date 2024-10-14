@@ -14,12 +14,6 @@ Needed by "mb" (and therefore required to be placed within $PATH) are:
        The scanner, for now written in Perl, which is integral part of MirrorBrain.
        Install it as /usr/bin/scanner. You don't execute it directly though.
        It's called for you when you use the command "mb scan".
-  
-
-Optional tools:
-
-    geoip-lite-update
-       Can fetch updated databases from GeoIP
 
 
 Additional tools that may or may not be useful for operators of MirrorBrain, or

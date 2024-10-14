@@ -84,28 +84,11 @@ Build and install mod_autoindex_mb::
   apxs -cia mod_autoindex_mb.c
 
 
-mod_geoip
-~~~~~~~~~
+mod_maxminddb
+~~~~~~~~~~~~~
 
-Install the GeoIP library, the accompanying commandline tools, and the geoip Apache module.
-
-Configure mod_geoip::
-
-  GeoIPEnable On
-  GeoIPOutput Env
-  GeoIPDBFile /var/lib/GeoIP/GeoIP.dat MMapCache
-
-(You would typically put this into the server-wide context of a virtual host.)
-
-Note that a caching mode like MMapCache needs to be used, when Apache runs with the worker MPM.
-See http://forum.maxmind.com/viewtopic.php?p=2078 for more information.
-
-You need to build two commandline tools for GeoIP::
-
-  cd tools
-  gcc -Wall -o geoiplookup_continent geoiplookup_continent.c -lGeoIP
-  gcc -Wall -o geoiplookup_city geoiplookup_city.c -lGeoIP
-
+Install the GeoIP library, the accompanying commandline tools, and the Apache module and
+configure mod_maxminddb (see initial_config page for details).
 
 
 Installing Python and Perl modules
@@ -190,9 +173,6 @@ You need to install a number of the provided tools to a location in your $PATH.
 Unfortunately, there is no Makefile to take this work off you. Hopefully, one can
 be provided later::
 
-  install -m 755 tools/geoiplookup_continent /usr/bin/geoiplookup_continent
-  install -m 755 tools/geoiplookup_city      /usr/bin/geoiplookup_city
-  install -m 755 tools/geoip-lite-update     /usr/bin/geoip-lite-update
   install -m 755 tools/null-rsync            /usr/bin/null-rsync
   install -m 755 tools/scanner.pl            /usr/bin/scanner
   install -m 755 mirrorprobe/mirrorprobe.py  /usr/bin/mirrorprobe
