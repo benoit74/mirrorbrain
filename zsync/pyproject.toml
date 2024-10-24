@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zsync"
+version = "0.1"
+
+[tool.setuptools]
+ext-modules = [
+  {name = "zsync", sources = ["zsync_module.c"]}
+]
