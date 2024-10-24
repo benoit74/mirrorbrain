@@ -44,7 +44,7 @@ def probe_http(mirror):
 
     try:
 
-        logging.debug("%s probing %s" % (threading.currentThread().getName(), mirror.identifier))
+        logging.debug("%s probing %s" % (threading.current_thread().name, mirror.identifier))
 
         #def urllib2_debug_init(self, debuglevel=0):
         #    self._debuglevel = 1
@@ -79,7 +79,7 @@ def probe_http(mirror):
                     mirror.response_code = 200
                 logging.debug('mirror %s redirects to ftp:// URL' % mirror.identifier)
 
-            logging.debug('%s got response for %s: %s' % (threading.currentThread().getName(), mirror.identifier, getattr(response, 'code', None)))
+            logging.debug('%s got response for %s: %s' % (threading.current_thread().name, mirror.identifier, getattr(response, 'code', None)))
 
             mirror.response = response.read()
             mirror.status_baseurl_new = True
@@ -264,8 +264,12 @@ def main():
     #
     # setup database connection
     #
+    from mb.__about__ import __version__
+    from mb.util import VersionParser
+    version = VersionParser(__version__)
     import mb.conn
     conn = mb.conn.Conn(config.dbconfig, 
+                        version = version,
                         debug = (options.loglevel == 'DEBUG'))
 
 
@@ -302,13 +306,13 @@ def main():
 
         t = threading.Thread(target=probe_http, 
                              args=[mirrors[i]], 
-                             name="probeThread-%s (%s)" % (mirror.id, mirror.identifier))
-        # thread will keep the program from terminating.
-        t.setDaemon(0)
+                             name="probeThread-%s (%s)" % (mirror.id, mirror.identifier),
+                             # thread will keep the program from terminating.
+                             daemon=False)
         t.start()
 
-    while threading.activeCount() > 1:
-        logging.debug('waiting for %s threads to exit' % (threading.activeCount() - 1))
+    while threading.active_count() > 1:
+        logging.debug('waiting for %s threads to exit' % (threading.active_count() - 1))
         time.sleep(1)
 
 
