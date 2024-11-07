@@ -7,3 +7,5 @@ Note that these flags are named using the ISO3166-1 alpha-2 country codes where 
 If you find these icons useful, please donate via paypal to mjames@gmail.com (or click the donate button available at http://www.famfamfam.com/lab/icons/silk)
 
 Contact: mjames@gmail.com
+
+Modified by us (kiwix) to add ar (antartica) flag sourced from wikipedia.
