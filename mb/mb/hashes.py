@@ -176,7 +176,7 @@ class Hasheable:
                     self.hb.pgp or "",
                     self.hb.zblocksize,
                     self.hb.get_zparams(),
-                    binascii.hexlify("".join(self.hb.zsums)),
+                    binascii.hexlify(b"".join(self.hb.zsums)).decode("ASCII"),
                 ],
             )
             c.execute("COMMIT")
@@ -221,7 +221,7 @@ class Hasheable:
                     self.hb.pgp or "",
                     self.hb.zblocksize,
                     self.hb.get_zparams(),
-                    binascii.hexlify("".join(self.hb.zsums)),
+                    binascii.hexlify(b"".join(self.hb.zsums)).decode("ASCII"),
                     file_id,
                 ],
             )
@@ -296,6 +296,8 @@ class HashBag:
                     short_read_before = True
                 else:
                     raise Exception("InternalError")
+            if isinstance(buf, str):
+                buf = str.encode("UTF-8")
 
             m.update(buf)
             s1.update(buf)
@@ -435,39 +437,48 @@ class HashBag:
         """calculate a bittorrent information hash (btih)"""
 
         buf = [
-            "d",
-            "6:length",
-            "i",
-            str(self.h.size),
-            "e",
-            "6:md5sum",
-            str(MD5_DIGESTSIZE * 2),
-            ":",
-            self.md5hex,
-            "4:name",
-            str(len(self.basename)),
-            ":",
-            self.basename,
-            "12:piece length",
-            "i",
-            str(self.chunk_size),
-            "e",
-            "6:pieces",
-            str(len(self.pieces) * SHA1_DIGESTSIZE),
-            ":",
-            "".join(self.pieces),
-            "4:sha1",
-            str(SHA1_DIGESTSIZE),
-            ":",
-            self.sha1,
-            "6:sha256",
-            str(SHA256_DIGESTSIZE),
-            ":",
-            self.sha256 or "",
-            "e",
+            b"d",
+            b"6:length",
+            b"i",
+            str(self.h.size).encode("ASCII"),
+            b"e",
+            b"6:md5sum",
+            str(MD5_DIGESTSIZE * 2).encode("ASCII"),
+            b":",
+            (
+                self.md5hex.encode("ASCII")
+                if isinstance(self.md5hex, str)
+                else self.md5hex
+            ),
+            b"4:name",
+            str(len(self.basename)).encode("ASCII"),
+            b":",
+            str(self.basename).encode("ASCII"),
+            b"12:piece length",
+            b"i",
+            str(self.chunk_size).encode("ASCII"),
+            b"e",
+            b"6:pieces",
+            str(len(self.pieces) * SHA1_DIGESTSIZE).encode("ASCII"),
+            b":",
+            b"".join(self.pieces),
+            b"4:sha1",
+            str(SHA1_DIGESTSIZE).encode("ASCII"),
+            b":",
+            self.sha1.encode("ASCII") if isinstance(self.sha1, str) else self.sha1,
+            b"6:sha256",
+            str(SHA256_DIGESTSIZE).encode("ASCII"),
+            b":",
+            (
+                self.sha256.encode("ASCII")
+                if isinstance(self.sha256, str)
+                else self.sha256
+            )
+            or b"",
+            b"e",
         ]
 
         h = sha1.sha1()
-        h.update("".join(buf))
+        h.update(b"".join(buf))
         self.btih = h.digest()
         self.btihhex = h.hexdigest()
