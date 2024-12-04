@@ -453,7 +453,7 @@ class HashBag:
             b"4:name",
             str(len(self.basename)).encode("ASCII"),
             b":",
-            str(self.basename).encode("ASCII"),
+            str(self.basename).encode("UTF-8"),
             b"12:piece length",
             b"i",
             str(self.chunk_size).encode("ASCII"),
